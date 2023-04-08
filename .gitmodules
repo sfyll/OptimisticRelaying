@@ -1,0 +1,3 @@
+[submodule "lib/telepathy-contracts"]
+	path = lib/telepathy-contracts
+	url = git@github.com:succinctlabs/telepathy-contracts.git
