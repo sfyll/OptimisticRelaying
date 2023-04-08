@@ -1,0 +1,1 @@
+telepathy-contracts/=lib/telepathy-contracts/
