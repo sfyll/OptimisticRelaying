@@ -1,1 +1,2 @@
 telepathy-contracts/=lib/telepathy-contracts/
+forge-std/=lib/forge-std/src/
