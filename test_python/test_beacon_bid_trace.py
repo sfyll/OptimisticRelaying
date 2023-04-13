@@ -68,7 +68,7 @@ hashtreeroot = obj.hash_tree_root()
 
 
 # #get hashtreeroot using custom function
-hashtreerootcustom = get_hash_tree_root_bid_trace(slot_ssz, parent_root_ssz, state_root_ssz, builder_pubkey_ssz, proposer_pubkey_ssz, proposer_fee_recipient_ssz, gas_limit_ssz, gas_used_ssz, value_ssz)
+expected_hashtreeroot = get_hash_tree_root_bid_trace(slot_ssz, parent_root_ssz, state_root_ssz, builder_pubkey_ssz, proposer_pubkey_ssz, proposer_fee_recipient_ssz, gas_limit_ssz, gas_used_ssz, value_ssz)
 
 assert(serialized_obj.hex() == expected_ssz_encoded)
-assert(hashtreerootcustom == hashtreeroot.hex())
+assert(expected_hashtreeroot == hashtreeroot.hex())

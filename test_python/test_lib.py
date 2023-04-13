@@ -80,6 +80,12 @@ def get_hash_tree_root_bid_trace(slot_ssz, parent_root_ssz, state_root_ssz, buil
 
     return hash_function(node_1_final + node_2_final).hex()
 
+def get_hash_tree_root_bls_pubkey(bls_pubkey_ssz):
+    padded_bls_pubkey_first_chunk = bls_pubkey_ssz[:66]
+    padded_bls_pubkey_second_chunk = right_padding('0x'+ bls_pubkey_ssz[66:])
+
+    return hash_function(get_value_to_hash(padded_bls_pubkey_first_chunk, padded_bls_pubkey_second_chunk)).hex()
+
 def serialize_test(to_serialize: List[str]) -> str:
     result = ''
     for element in to_serialize:
