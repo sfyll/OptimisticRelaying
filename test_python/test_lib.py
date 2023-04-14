@@ -1,6 +1,17 @@
 from io import BytesIO
+import json
+import os
 from typing import List, Optional
+
 from eth2spec.utils.hash_function import hash as hash_function
+
+def load_json_data(filename: str):
+    """
+    Load a JSON file, just pass in the extension
+    """
+    path = os.path.dirname(os.path.dirname(__file__)) + "/test_data/"
+    with open(path + filename, 'r') as f:
+        return json.load(f)
 
 def serialize_object(obj, stream = BytesIO()):
     """
