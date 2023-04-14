@@ -59,13 +59,14 @@ obj = BidTrace(
 
 #Serialize using library
 serialized_obj = serialize_object(obj)
+print(f"{serialized_obj.hex()=}")
 
 #Serialize using custom function
 expected_ssz_encoded = serialize_test([slot_ssz, parent_root_ssz, state_root_ssz, builder_pubkey_ssz, proposer_pubkey_ssz, proposer_fee_recipient_ssz, gas_limit_ssz, gas_used_ssz, value_ssz])
 
 #get hashtreeroot using library
 hashtreeroot = obj.hash_tree_root()
-
+print(f"{hashtreeroot.hex()=}")
 
 # #get hashtreeroot using custom function
 expected_hashtreeroot = get_hash_tree_root_bid_trace(slot_ssz, parent_root_ssz, state_root_ssz, builder_pubkey_ssz, proposer_pubkey_ssz, proposer_fee_recipient_ssz, gas_limit_ssz, gas_used_ssz, value_ssz)
