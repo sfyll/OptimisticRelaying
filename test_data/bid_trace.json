@@ -7,5 +7,5 @@
     "proposerFeeRecipient": "0xabcf8e0d4e9587369b2301d0790347320302cc09",
     "gasLimit": 1,
     "gasUsed": 1,
-    "value": 1000000000000000000000000000000
+    "value": "1000000000000000000000000000000"
 }
