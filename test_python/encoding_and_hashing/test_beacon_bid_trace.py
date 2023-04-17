@@ -23,6 +23,7 @@ class BidTrace(Container):
     Value: uint256
 
 bid_trace = load_json_data("bid_trace.json")
+bid_trace["value"] = int(bid_trace["value"])
 bid_trace_ssz_encoded = load_json_data("bid_trace_ssz_encoded.json")
 
 obj = BidTrace(

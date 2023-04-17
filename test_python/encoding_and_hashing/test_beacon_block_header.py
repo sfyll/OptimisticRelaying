@@ -7,6 +7,8 @@ Beacon Block Header Encoding Test
 """
 
 beacon_block_header = load_json_data("beacon_block_header.json")
+beacon_block_header["slot"] = int(beacon_block_header["slot"])
+beacon_block_header["proposerIndex"] = int(beacon_block_header["proposerIndex"])
 beacon_block_header_ssz_encoded = load_json_data("beacon_block_header_ssz_encoded.json")
 
 obj = BeaconBlockHeader(
