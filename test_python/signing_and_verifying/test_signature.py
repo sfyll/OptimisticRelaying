@@ -66,11 +66,7 @@ class testSignature:
 
         signature = sign_message(signing_root, self.key_information["builder"].private_key)
         
-        print(f"builder signature: {signature.hex()=}")
-
         is_sig_valid = verify_signature(signing_root, signature, bytes.fromhex(self.key_information["builder"].public_key))
-
-        print(f"builder verification: {is_sig_valid=}")
 
         assert(is_sig_valid == True)
         
@@ -83,8 +79,13 @@ class testSignature:
             "signature": signature.hex(),
         }
 
+        hash_tree_root_dict = {
+            "hash_tree_root": "0x" + bid_trace.hash_tree_root().hex()
+        }
+
         write_to_json(dictionary_bid_trace, "bid_trace.json")
         write_to_json(signature_dict, "bid_trace_bls_sig.json")
+        write_to_json(hash_tree_root_dict, "bid_trace_hash_tree_root.json")
 
     def proposer_sign_and_json_write(self) -> None:
         beacon_block_header = get_beacon_block_header()
@@ -94,11 +95,7 @@ class testSignature:
 
         signature = sign_message(signing_root, self.key_information["proposer"].private_key)
         
-        print(f"builder signature: {signature.hex()=}")
-
         is_sig_valid = verify_signature(signing_root, signature, bytes.fromhex(self.key_information["proposer"].public_key))
-
-        print(f"builder verification: {is_sig_valid=}")
 
         assert(is_sig_valid == True)
 
@@ -107,9 +104,14 @@ class testSignature:
         signature_dict = {
             "signature": signature.hex(),
         }
+
+        hash_tree_root_dict = {
+            "hash_tree_root": "0x" + beacon_block_header.hash_tree_root().hex()
+        }
         
         write_to_json(dictionary_beacon_block_header, "beacon_block_header.json")
         write_to_json(signature_dict, "beacon_block_header_bls_sig.json")
+        write_to_json(hash_tree_root_dict, "beacon_block_header_hash_tree_root.json")
 
 if __name__ == "__main__":
     test_signature = testSignature()
