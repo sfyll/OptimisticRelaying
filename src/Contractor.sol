@@ -17,32 +17,26 @@ struct BidTrace {
 
 contract Contractor {
 
+    function getSigningRootBeaconBlockHeader(BeaconBlockHeader memory header, bytes32 domain) public pure returns (bytes32) {
+        return sha256(
+            bytes.concat(
+                getHashTreeRootBlockHeader(header),
+                domain
+            )
+        );
+    }
+
+    function getSigningRootBidTrace(BidTrace memory bidTrace, bytes32 domain) public pure returns (bytes32) {
+        return sha256(
+            bytes.concat(
+                getHashTreeRootBidTrace(bidTrace),
+                domain
+            )
+        );
+    }
+
     function getHashTreeRootBlockHeader(BeaconBlockHeader memory header) public pure returns (bytes32) {
         return SSZ.sszBeaconBlockHeader(header);
-    }
-
-    function getEncodedBlockHeader(BeaconBlockHeader memory header) public pure returns (bytes memory) {
-        return bytes.concat(
-            BytesLib.slice(abi.encodePacked(SSZ.toLittleEndian(header.slot)), 0 , 8),
-            BytesLib.slice(abi.encodePacked(SSZ.toLittleEndian(header.proposerIndex)), 0, 8),
-            header.parentRoot,
-            header.stateRoot,
-            header.bodyRoot
-        );
-    }
-
-    function getEncodedBidTrace(BidTrace memory bidTrace) public pure returns (bytes memory) {
-        return bytes.concat(
-            BytesLib.slice(abi.encodePacked(SSZ.toLittleEndian(bidTrace.slot)), 0 , 8),
-            bidTrace.parentRoot,
-            bidTrace.stateRoot,
-            bidTrace.builderPubkey,
-            bidTrace.proposerPubkey,
-            abi.encodePacked(bidTrace.proposerFeeRecipient),
-            BytesLib.slice(abi.encodePacked(SSZ.toLittleEndian(bidTrace.gasLimit)), 0, 8),
-            BytesLib.slice(abi.encodePacked(SSZ.toLittleEndian(bidTrace.gasUsed)), 0, 8),
-            SSZ.toLittleEndian(bidTrace.value)
-        );
     }
 
     function getHashTreeRootBidTrace(BidTrace memory bidTrace) public pure returns (bytes32) {
