@@ -69,4 +69,14 @@ contract ContractorTest is Test, ContractorFixture {
         bytes32 hashTreeRoot = contractor.getHashTreeRootBidTrace(bidTrace);
         assert(hashTreeRoot == bidTraceVerificationData.hashTreeRoot);
     }
+
+    function test_getSigningRootBeaconBlockHeader() public view {
+        bytes32 signingRoot = contractor.getSigningRootBeaconBlockHeader(header, headerVerificationData.domain);
+        assert(signingRoot == headerVerificationData.signingRoot);
+    }
+
+    function test_getSigningRootBidTrace() public view {
+        bytes32 signingRoot = contractor.getSigningRootBidTrace(bidTrace, bidTraceVerificationData.domain);
+        assert(signingRoot == bidTraceVerificationData.signingRoot);
+    }
 }
