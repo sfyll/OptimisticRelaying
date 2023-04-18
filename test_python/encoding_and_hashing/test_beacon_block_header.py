@@ -1,27 +1,14 @@
 from eth2spec.phase0.spec import  BeaconBlockHeader, Slot, ValidatorIndex, Root
 
-from test_python.test_lib import serialize_object, get_hash_tree_root_beacon_block_header, load_json_data
+from test_python.test_lib import serialize_object, get_hash_tree_root_beacon_block_header, load_json_data, get_beacon_block_header
 
-"""
-Beacon Block Header Encoding Test
-"""
-
-beacon_block_header = load_json_data("beacon_block_header.json")
-beacon_block_header["slot"] = int(beacon_block_header["slot"])
-beacon_block_header["proposerIndex"] = int(beacon_block_header["proposerIndex"])
+beacon_block_header = get_beacon_block_header()
 beacon_block_header_ssz_encoded = load_json_data("beacon_block_header_ssz_encoded.json")
 
-obj = BeaconBlockHeader(
-    slot=Slot(beacon_block_header['slot']),
-    proposer_index=ValidatorIndex(beacon_block_header['proposerIndex']),
-    parent_root=Root(beacon_block_header['parentRoot']),
-    state_root=Root(beacon_block_header['stateRoot']),
-    body_root=Root(beacon_block_header['bodyRoot']),
-)
 
 # Serialize beacon block header using library
-serialized_block_header = serialize_object(obj)
-hashtreeroot = obj.hash_tree_root()
+serialized_block_header = serialize_object(beacon_block_header)
+hashtreeroot = beacon_block_header.hash_tree_root()
 print(f"{serialized_block_header.hex()=}")
 print(f"{hashtreeroot.hex()=}")
 
