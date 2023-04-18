@@ -8,7 +8,7 @@ forkVersion = Tuple[bytes, ...]
 
 domainTypeBeaconProposer = b'\x00' + b'\x00' + b'\x00' + b'\x00'
 
-def get_proposer_domain(domainTypeBeaconProposer, forkVersion = None, root = None) -> bytes:
+def get_proposer_domain(forkVersion = None, root = None) -> bytes:
     return compute_domain(domainTypeBeaconProposer, forkVersion, root)
 
 proposer_domain = get_proposer_domain(domainTypeBeaconProposer)
