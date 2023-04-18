@@ -53,32 +53,37 @@ class testSignature:
 
         return key_information
 
+    def load_objects(self) -> None:
+        self.proposer_domain = get_proposer_domain()
+        self.builder_domain = get_builder_domain()
+        self.bid_trace = get_bid_trace()
+        self.beacon_block_header = get_beacon_block_header()
+
     def run(self) -> None:
-        self.test_compute_signing_root_proposer()
-        self.test_compute_signing_root_builder
+        self.load_objects()
         self.builder_sign_and_json_write()
         self.proposer_sign_and_json_write()
 
     def builder_sign_and_json_write(self) -> None:
-        bid_trace = get_bid_trace()
-        builder_domain = get_builder_domain()
+        self.bid_trace.BuilderPubkey = self.key_information['builder'].public_key
+        self.bid_trace.ProposerPubkey =  self.key_information['proposer'].public_key
 
-        signing_root = compute_signing_root(bid_trace, builder_domain)
+        self.test_compute_signing_root_builder()
+        
+        signing_root = compute_signing_root(self.bid_trace, self.builder_domain)
 
         signature = sign_message(signing_root, self.key_information["builder"].private_key)
         
         is_sig_valid = verify_signature(signing_root, signature, bytes.fromhex(self.key_information["builder"].public_key))
 
         assert(is_sig_valid == True)
-        
-        bid_trace.BuilderPubkey = self.key_information['builder'].public_key
-        bid_trace.ProposerPubkey =  self.key_information['proposer'].public_key
 
-        dictionary_bid_trace = convert_bid_trace_to_dict(bid_trace)
+        dictionary_bid_trace = convert_bid_trace_to_dict(self.bid_trace)
 
         data_for_verification = {
+            "domain": "0x" + self.builder_domain.hex(),
             "signature": signature.hex(),
-            "hash_tree_root": "0x" + bid_trace.hash_tree_root().hex(),
+            "hash_tree_root": "0x" + self.bid_trace.hash_tree_root().hex(),
             "signing_root": "0x" + signing_root.hex(),
         }
 
@@ -86,10 +91,9 @@ class testSignature:
         write_to_json(data_for_verification, "bid_trace_data_for_verification.json")
 
     def proposer_sign_and_json_write(self) -> None:
-        beacon_block_header = get_beacon_block_header()
-        proposer_domain = get_proposer_domain()
+        self.test_compute_signing_root_proposer()
 
-        signing_root = compute_signing_root(beacon_block_header, proposer_domain)
+        signing_root = compute_signing_root(self.beacon_block_header, self.proposer_domain)
 
         signature = sign_message(signing_root, self.key_information["proposer"].private_key)
         
@@ -97,11 +101,12 @@ class testSignature:
 
         assert(is_sig_valid == True)
 
-        dictionary_beacon_block_header = convert_beacon_block_header_to_dict(beacon_block_header)
+        dictionary_beacon_block_header = convert_beacon_block_header_to_dict(self.beacon_block_header)
 
         data_for_verification = {
+            "domain": "0x" + self.proposer_domain.hex(),
             "signature": signature.hex(),
-            "hash_tree_root": "0x" + beacon_block_header.hash_tree_root().hex(),
+            "hash_tree_root": "0x" + self.beacon_block_header.hash_tree_root().hex(),
             "signing_root": "0x" + signing_root.hex(),
         }
         
@@ -113,11 +118,8 @@ class testSignature:
         We can just pass the Domain as a tranasction input,
         so let's focus on handling it on-chain
         """
-        beacon_block_header = get_beacon_block_header()
-        proposer_domain = get_proposer_domain()
-
-        expected_signing_root = compute_signing_root(beacon_block_header, proposer_domain)
-        actual_signing_root = get_signing_root_test("0x" + beacon_block_header.hash_tree_root().hex(), "0x" + proposer_domain.hex())
+        expected_signing_root = compute_signing_root(self.beacon_block_header, self.proposer_domain)
+        actual_signing_root = get_signing_root_test("0x" + self.beacon_block_header.hash_tree_root().hex(), "0x" + self.proposer_domain.hex())
 
         assert(expected_signing_root.hex() == actual_signing_root.hex())
 
@@ -126,11 +128,8 @@ class testSignature:
         We can just pass the Domain as a tranasction input,
         so let's focus on handling it on-chain
         """
-        bid_trace = get_bid_trace()
-        builder_domain  = get_builder_domain()
-
-        expected_signing_root = compute_signing_root(bid_trace, builder_domain)
-        actual_signing_root = get_signing_root_test("0x" + bid_trace.hash_tree_root().hex(), "0x" + builder_domain.hex())
+        expected_signing_root = compute_signing_root(self.bid_trace, self.builder_domain)
+        actual_signing_root = get_signing_root_test("0x" + self.bid_trace.hash_tree_root().hex(), "0x" + self.builder_domain.hex())
 
         assert(expected_signing_root.hex() == actual_signing_root.hex())
 
@@ -138,3 +137,12 @@ class testSignature:
 if __name__ == "__main__":
     test_signature = testSignature()
     test_signature.run()
+
+#bid_trace.hash_tree_root().hex()='a44ed86a1affb715c125219d38f85bc1d104b2e156bac8cbef47b604c3077888'
+#bid_trace.hash_tree_root().hex()='a44ed86a1affb715c125219d38f85bc1d104b2e156bac8cbef47b604c3077888
+#signing_root.hex()='c825f2c0d1eb449c26607fb70967148312788a73d9b7694260432d6cd23b21d8'
+#signing_root.hex()='7392667708162597561260edaee606d6da4bcbfaa03666113c99d69a0a915b31'
+#builder_domain.hex()='00000001f5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a9'
+#builder_domain.hex()='00000001f5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a9'
+#0x50000a0d83be9c3a30327108be0a93bed9ecc35c50aae326b1b8ee061e5bb298
+#
