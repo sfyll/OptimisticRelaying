@@ -10,7 +10,7 @@ source "$SCRIPT_DIR/env/bin/activate"
 python3 -m test_python.signing_and_verifying.test_signature
 
 # Run the Forge tests with verbosity level 4
-forge test -vvv
+forge test -vv
 
 # Deactivate the Python environment
 deactivate
