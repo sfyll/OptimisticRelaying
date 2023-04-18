@@ -155,6 +155,12 @@ def get_hash_tree_root_bls_pubkey(bls_pubkey_ssz):
 
     return hash_function(get_value_to_hash(padded_bls_pubkey_first_chunk, padded_bls_pubkey_second_chunk)).hex()
 
+def get_signing_root_test(beacon_block_header_tree_root, proposer_domain):
+    padded_slot_block_header_tree_root = right_padding(beacon_block_header_tree_root)
+    padded_proposer_domain = right_padding(proposer_domain)
+
+    return hash_function(get_value_to_hash(padded_slot_block_header_tree_root, padded_proposer_domain))
+
 def serialize_test(to_serialize: List[str]) -> str:
     result = ""
     for element in to_serialize:
