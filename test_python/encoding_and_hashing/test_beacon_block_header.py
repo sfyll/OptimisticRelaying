@@ -1,10 +1,9 @@
-from eth2spec.phase0.spec import  BeaconBlockHeader, Slot, ValidatorIndex, Root
-
 from test_python.test_lib import serialize_object, get_hash_tree_root_beacon_block_header, load_json_data, get_beacon_block_header
+
+"""Below works for fixed case, not dynamic testing"""
 
 beacon_block_header = get_beacon_block_header()
 beacon_block_header_ssz_encoded = load_json_data("beacon_block_header_ssz_encoded.json")
-
 
 # Serialize beacon block header using library
 serialized_block_header = serialize_object(beacon_block_header)

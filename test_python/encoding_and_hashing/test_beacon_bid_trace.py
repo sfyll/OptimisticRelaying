@@ -1,5 +1,6 @@
-
 from test_python.test_lib import serialize_object, get_hash_tree_root_bid_trace, serialize_test, load_json_data, get_bid_trace
+
+"""Below works for fixed case, not dynamic testing"""
 
 bid_trace_ssz_encoded = load_json_data("bid_trace_ssz_encoded.json")
 bid_trace = get_bid_trace()
