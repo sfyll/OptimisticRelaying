@@ -31,6 +31,7 @@ contract ContractorFixture {
     }
 
     struct DataForVerification {
+        bytes32 domain;
         bytes32 hashTreeRoot;
         bytes signatures;
         bytes32 signingRoot;
