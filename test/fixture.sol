@@ -30,6 +30,12 @@ contract ContractorFixture {
         string value;
     }
 
+    struct DataForVerification {
+        bytes32 hashTreeRoot;
+        bytes signatures;
+        bytes32 signingRoot;
+    }
+
     function newBeaconBlockHeader(BeaconBlockHeaderFixture memory beaconBlockHeaderFixture)
         public
         returns (BeaconBlockHeader memory)
