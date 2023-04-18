@@ -4,14 +4,46 @@ import os
 from typing import List, Optional
 
 from eth2spec.utils.hash_function import hash as hash_function
+from eth2spec.phase0.spec import BeaconBlockHeader, BLSPubkey, Root, Slot, ValidatorIndex
+from eth2spec.utils.ssz.ssz_typing import uint64, uint256
+
+from test_python.test_objects import BidTrace, Address
+
+__path = os.path.dirname(os.path.dirname(__file__)) + "/test_data/"
 
 def load_json_data(filename: str):
     """
     Load a JSON file, just pass in the extension
     """
-    path = os.path.dirname(os.path.dirname(__file__)) + "/test_data/"
-    with open(path + filename, 'r') as f:
+    with open(__path + filename, 'r') as f:
         return json.load(f)
+
+def get_bid_trace() -> BidTrace:
+    bid_trace = load_json_data("bid_trace.json")
+    bid_trace["value"] = int(bid_trace["value"])
+
+    return BidTrace(
+        slot=Slot(bid_trace['slot']),
+        parent_root=Root(bid_trace['parentRoot']),
+        state_root=Root(bid_trace['stateRoot']),
+        BuilderPubkey=BLSPubkey(bid_trace['builderPubkey']),
+        ProposerPubkey=BLSPubkey(bid_trace['proposerPubkey']),
+        ProposerFeeRecipient=Address(bid_trace['proposerFeeRecipient']),
+        GasLimit=uint64(bid_trace['gasLimit']),
+        GasUsed=uint64(bid_trace['gasUsed']),
+        Value=uint256(bid_trace['value']),
+    )
+
+def get_beacon_block_header() -> BeaconBlockHeader:
+    beacon_block_header = load_json_data("beacon_block_header.json")
+
+    return BeaconBlockHeader(
+        slot=Slot(beacon_block_header['slot']),
+        proposer_index=ValidatorIndex(beacon_block_header['proposerIndex']),
+        parent_root=Root(beacon_block_header['parentRoot']),
+        state_root=Root(beacon_block_header['stateRoot']),
+        body_root=Root(beacon_block_header['bodyRoot']),
+    )
 
 def serialize_object(obj, stream = BytesIO()):
     """
