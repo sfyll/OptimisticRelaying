@@ -11,6 +11,10 @@ from test_python.test_objects import BidTrace, Address
 
 __path = os.path.dirname(os.path.dirname(__file__)) + "/test_data/"
 
+def write_to_json(data: dict, filename: str):
+    with open('test_data/' + filename, 'w') as file:
+        json.dump(data, file)
+
 def load_json_data(filename: str):
     """
     Load a JSON file, just pass in the extension
@@ -34,6 +38,19 @@ def get_bid_trace() -> BidTrace:
         Value=uint256(bid_trace['value']),
     )
 
+def convert_bid_trace_to_dict(bid_trace: BidTrace) -> dict:
+    return {
+    'slot': bid_trace.slot,
+    'parent_root': bid_trace.parent_root,
+    'state_root': bid_trace.state_root,
+    'builder_pubkey': bid_trace.BuilderPubkey,
+    'proposer_pubkey': bid_trace.ProposerPubkey,
+    'proposer_fee_recipient': bid_trace.ProposerFeeRecipient,
+    'gas_limit': bid_trace.GasLimit,
+    'gas_used': bid_trace.GasUsed,
+    'value': str(bid_trace.Value)
+    }
+
 def get_beacon_block_header() -> BeaconBlockHeader:
     beacon_block_header = load_json_data("beacon_block_header.json")
 
@@ -44,6 +61,15 @@ def get_beacon_block_header() -> BeaconBlockHeader:
         state_root=Root(beacon_block_header['stateRoot']),
         body_root=Root(beacon_block_header['bodyRoot']),
     )
+
+def convert_beacon_block_header_to_dict(beacon_block_header: BeaconBlockHeader) -> dict:
+    return {
+    'slot': beacon_block_header.slot,
+    'proposer_index': beacon_block_header.proposer_index,
+    'parent_root': beacon_block_header.parent_root,
+    'state_root': beacon_block_header.state_root,
+    'body_root': beacon_block_header.body_root
+    }
 
 def serialize_object(obj, stream = BytesIO()):
     """
