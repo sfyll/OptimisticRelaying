@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity >=0.8.0 <0.9.0;
 
 import "forge-std/console.sol";
 import "forge-std/Test.sol";
 
-import {Contractor, BidTrace} from "../src/Contractor.sol";
+import {Contractor} from "../src/Contractor.sol";
+import {BidTrace} from "../src/lib/SSZUtilities.sol";
 import {SSZ, BeaconBlockHeader} from "telepathy-contracts/src/libraries/SimpleSerialize.sol";
 import {BytesLib} from "telepathy-contracts/src/libraries/MessageEncoding.sol";
 import {ContractorFixture} from "test/fixture.sol";
