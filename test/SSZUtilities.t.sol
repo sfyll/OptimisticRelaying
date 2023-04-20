@@ -4,15 +4,14 @@ pragma solidity >=0.8.0 <0.9.0;
 import "forge-std/console.sol";
 import "forge-std/Test.sol";
 
-import {Contractor} from "../src/Contractor.sol";
-import {BidTrace} from "../src/lib/SSZUtilities.sol";
+import {BidTrace, SSZUtilities} from "../src/lib/SSZUtilities.sol";
 import {SSZ, BeaconBlockHeader} from "telepathy-contracts/src/libraries/SimpleSerialize.sol";
 import {BytesLib} from "telepathy-contracts/src/libraries/MessageEncoding.sol";
-import {ContractorFixture} from "test/fixture.sol";
+import {Fixture} from "test/fixture.sol";
 
-contract ContractorTest is Test, ContractorFixture {
+contract SSZUtilitiesTest is Test, Fixture {
 
-    Contractor public contractor;
+    SSZUtilities public SSZutilities;
 
     BeaconBlockHeader public header;
     DataForVerification public headerVerificationData;
@@ -21,7 +20,7 @@ contract ContractorTest is Test, ContractorFixture {
     DataForVerification public bidTraceVerificationData;
     
      function setUp() public {
-        contractor = new Contractor();
+        SSZutilities = new SSZUtilities();
 
         string memory root = vm.projectRoot();
 
@@ -62,22 +61,22 @@ contract ContractorTest is Test, ContractorFixture {
         }
 
     function test_getHashTreeRootBlockHeader() public view{
-        bytes32 hashTreeRoot = contractor.getHashTreeRootBlockHeader(header);
+        bytes32 hashTreeRoot = SSZutilities.getHashTreeRootBlockHeader(header);
         assert(hashTreeRoot == headerVerificationData.hashTreeRoot);
     }
 
     function test_getHashTreeRootBidTrace() public view {
-        bytes32 hashTreeRoot = contractor.getHashTreeRootBidTrace(bidTrace);
+        bytes32 hashTreeRoot = SSZutilities.getHashTreeRootBidTrace(bidTrace);
         assert(hashTreeRoot == bidTraceVerificationData.hashTreeRoot);
     }
 
     function test_getSigningRootBeaconBlockHeader() public view {
-        bytes32 signingRoot = contractor.getSigningRootBeaconBlockHeader(header, headerVerificationData.domain);
+        bytes32 signingRoot = SSZutilities.getSigningRootBeaconBlockHeader(header, headerVerificationData.domain);
         assert(signingRoot == headerVerificationData.signingRoot);
     }
 
     function test_getSigningRootBidTrace() public view {
-        bytes32 signingRoot = contractor.getSigningRootBidTrace(bidTrace, bidTraceVerificationData.domain);
+        bytes32 signingRoot = SSZutilities.getSigningRootBidTrace(bidTrace, bidTraceVerificationData.domain);
         assert(signingRoot == bidTraceVerificationData.signingRoot);
     }
 }

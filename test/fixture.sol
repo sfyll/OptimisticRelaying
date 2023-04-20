@@ -8,7 +8,7 @@ import {BidTrace} from "../src/lib/SSZUtilities.sol";
 /// @dev    The weird ordering here is because vm.parseJSON require alphabetical ordering of the
 ///         fields in the struct, and odd types with conversions are due to the way the JSON is
 ///         handled.
-contract ContractorFixture {
+contract Fixture {
 
     struct BeaconBlockHeaderFixture {
         bytes32 bodyRoot;
