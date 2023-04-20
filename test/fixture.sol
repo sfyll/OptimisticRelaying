@@ -1,7 +1,7 @@
-pragma solidity ^0.8.13;
+pragma solidity >=0.8.0 <0.9.0;
 
 import {SSZ, BeaconBlockHeader} from "telepathy-contracts/src/libraries/SimpleSerialize.sol";
-import {BidTrace} from "src/Contractor.sol";
+import {BidTrace} from "../src/lib/SSZUtilities.sol";
 
 /// Forked from https://github.com/succinctlabs/telepathy-contracts/
 /// @notice Helper contract for parsing the JSON fixture, and converting them to the correct types.
@@ -23,7 +23,7 @@ contract ContractorFixture {
         uint64 gasLimit;
         uint64 gasUsed;
         bytes32 parentRoot;
-        address proposerFeeRecipient;
+        address payable proposerFeeRecipient;
         bytes proposerPubkey;
         uint64 slot;
         bytes32 stateRoot;
@@ -33,7 +33,7 @@ contract ContractorFixture {
     struct DataForVerification {
         bytes32 domain;
         bytes32 hashTreeRoot;
-        bytes signatures;
+        bytes signature;
         bytes32 signingRoot;
     }
 
