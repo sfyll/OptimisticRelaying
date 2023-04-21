@@ -3,28 +3,16 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "forge-std/console.sol";
 
-import {AccountHandler} from"src/lib/accountHandler.sol";
-import {Fixture} from "test/fixture.sol";
+import {AccountHandler} from "src/lib/accountHandler.sol";
+import {Fixture} from "test/lib/fixture.sol";
 
 contract AccountHandlerTest is Fixture {
     AccountHandler accountHandler;
 
-    function depositAndGetHashOfCommitedBlsAddress(uint256 value, bytes[] memory fakeBlsAddy) public returns (uint256, bytes32[] memory) {
-        value = accountHandlerFuzzingParamsDeposit(value, fakeBlsAddy);
-        
-        bytes32[] memory hashCommitedBlsAddress = getHashCommitedBlsAddress(fakeBlsAddy);
-        
-        accountHandler.deposit{value: value}(hashCommitedBlsAddress);
-
-        return (value, hashCommitedBlsAddress);
-    }
-
-    //@dev: we use any bytes array as a fake bls address since
-    //we manipulate their sha256 hash which is of size 32 bytes
     function testDeposit(uint256 value, bytes[] memory fakeBlsAddy) public {
         accountHandler = newAccountHandler();
 
-        (uint256 value, bytes32[] memory hashCommitedBlsAddress) = depositAndGetHashOfCommitedBlsAddress(value, fakeBlsAddy);
+        (uint256 value, bytes32[] memory hashCommitedBlsAddress) = depositAndGetHashOfCommitedBlsAddressFuzzing(value, fakeBlsAddy, accountHandler);
 
         uint256 balance = address(accountHandler).balance;
         bytes32[] memory inContractHashedBlsAdd = accountHandler.getBuilderHashCommitedBlsAddress(address(this));
@@ -37,7 +25,7 @@ contract AccountHandlerTest is Fixture {
                      bytes[] memory fakeBlsAddyAdd) public {
         accountHandler = newAccountHandler();
 
-        (uint256 deposit, bytes32[] memory hashCommitedBlsAddressDeposit) = depositAndGetHashOfCommitedBlsAddress(deposit, fakeBlsAddyDeposit);
+        (uint256 deposit, bytes32[] memory hashCommitedBlsAddressDeposit) = depositAndGetHashOfCommitedBlsAddressFuzzing(deposit, fakeBlsAddyDeposit, accountHandler);
 
         addedCollateral = accountHandlerFuzzingParamsAdd(addedCollateral, fakeBlsAddyAdd);
 
@@ -57,7 +45,7 @@ contract AccountHandlerTest is Fixture {
     function testInstantiateTransfer(uint256 value, bytes[] memory fakeBlsAddy) public {
         accountHandler = newAccountHandler();
         
-        (uint256 value, bytes32[] memory __) = depositAndGetHashOfCommitedBlsAddress(value, fakeBlsAddy);
+        (uint256 value, bytes32[] memory __) = depositAndGetHashOfCommitedBlsAddressFuzzing(value, fakeBlsAddy, accountHandler);
 
         accountHandler.instantiateTransfer();
         uint256 releaseTime = accountHandler.getBuilderReleaseTime(address(this));
@@ -68,7 +56,7 @@ contract AccountHandlerTest is Fixture {
     function testWithdraw(uint256 value, bytes[] memory fakeBlsAddy) public {
         accountHandler = newAccountHandler();
 
-        (uint256 value, bytes32[] memory hashCommitedBlsAddress) = depositAndGetHashOfCommitedBlsAddress(value, fakeBlsAddy);
+        (uint256 value, bytes32[] memory hashCommitedBlsAddress) = depositAndGetHashOfCommitedBlsAddressFuzzing(value, fakeBlsAddy, accountHandler);
 
         accountHandler.instantiateTransfer();
         uint256 releaseTime = accountHandler.getBuilderReleaseTime(address(this));
