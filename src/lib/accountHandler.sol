@@ -1,6 +1,9 @@
 pragma solidity >=0.8.6 <0.9.0;
 
-contract AccountHandler {
+import {IAccountHandler} from "src/interface/IAccountHandler.sol";
+import "forge-std/console.sol";
+
+contract AccountHandler is IAccountHandler {
 
     struct BuilderMetaDatas {
         uint256 balance;
@@ -9,7 +12,7 @@ contract AccountHandler {
         uint256 releaseTime;
     }
 
-    mapping(address => BuilderMetaDatas) builderMetaDatas;
+    mapping(address => BuilderMetaDatas) public builderMetaDatas;
 
     event Deposit(address indexed sender, uint256 amount);
     event Add(address indexed sender, uint256 amount);
@@ -37,16 +40,23 @@ contract AccountHandler {
     function add(bytes32[] memory hashCommitedBlsAddress) public payable {
         require(builderMetaDatas[msg.sender].exists == true, "Builder doesn't exists");
 
-        builderMetaDatas[msg.sender].balance += 0;
+        BuilderMetaDatas storage builderMetaData = builderMetaDatas[msg.sender];
+
+        builderMetaData.balance += msg.value;
 
         for (uint256 i = 0; i < hashCommitedBlsAddress.length; i++) {
-            builderMetaDatas[msg.sender].hashCommitedBlsAddress.push(hashCommitedBlsAddress[i]);
+            builderMetaData.hashCommitedBlsAddress.push(hashCommitedBlsAddress[i]);
         }
+
     }
 
     //@notice initiate withdraw with a 7 day timelock
     function instantiateTransfer() public {
-        require(builderMetaDatas[msg.sender].releaseTime == 0, "Transfer already initialized");
+        BuilderMetaDatas storage builderMetaData = builderMetaDatas[msg.sender];
+
+        require(builderMetaData.exists = true, "Builder doesn't exists");
+        require(builderMetaData.releaseTime == 0, "Transfer already initialized");
+        
         builderMetaDatas[msg.sender].releaseTime = block.timestamp + 7 days;
     }
 
@@ -61,5 +71,21 @@ contract AccountHandler {
         recipient.transfer(msg.value);
         
         emit Withdrawal(recipient, msg.value);
+    }
+
+    function getBuilderBalance(address _builder) external view returns (uint256) {
+        return builderMetaDatas[_builder].balance;
+    }
+
+    function getBuilderHashCommitedBlsAddress(address _builder) external view returns (bytes32[] memory) {
+        return builderMetaDatas[_builder].hashCommitedBlsAddress;
+    }
+    
+    function getBuilderExists(address _builder) external view returns (bool) {
+        return builderMetaDatas[_builder].exists;
+    }
+
+    function getBuilderReleaseTime(address _builder) external view returns (uint256) {
+        return builderMetaDatas[_builder].releaseTime;
     }
 }
