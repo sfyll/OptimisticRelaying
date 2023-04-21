@@ -2,6 +2,7 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import {SSZ, BeaconBlockHeader} from "telepathy-contracts/src/libraries/SimpleSerialize.sol";
 import "forge-std/Test.sol";
+import "forge-std/console.sol";
 
 import {BidTrace} from "../src/lib/SSZUtilities.sol";
 import {AccountHandler} from"src/lib/accountHandler.sol";
@@ -13,14 +14,6 @@ import {AccountHandler} from"src/lib/accountHandler.sol";
 ///         fields in the struct, and odd types with conversions are due to the way the JSON is
 ///         handled.
 contract Fixture is Test {
-
-    modifier accountHandlerFuzzingParams (uint256 value, bytes[] memory fakeBlsAddy) {
-        vm.assume(value > 0 ether);
-        vm.assume(value < 100_000_00 ether);
-        vm.assume(fakeBlsAddy.length < 100);
-        vm.deal(address(this), value + 1 ether); //gas fee
-        _;
-    }
 
     //SSZUtilities Test Section
 
@@ -53,6 +46,7 @@ contract Fixture is Test {
 
     function newBeaconBlockHeader(BeaconBlockHeaderFixture memory beaconBlockHeaderFixture)
         public
+        pure
         returns (BeaconBlockHeader memory)
     {
         return BeaconBlockHeader(
@@ -66,6 +60,7 @@ contract Fixture is Test {
 
     function newBidTrace(BidTraceFixture memory bidTraceFixture)
         public
+        pure
         returns (BidTrace memory)
     {
         return BidTrace(
@@ -94,12 +89,28 @@ contract Fixture is Test {
 
     //AccountHandler test section
 
+    function accountHandlerFuzzingParamsDeposit(uint256 value, bytes[] memory fakeBlsAddy) public payable returns (uint256) {
+        vm.assume(fakeBlsAddy.length < 10);
+        value = bound(value, 1 wei, 100_000_000 ether);
+        vm.deal(msg.sender, value + 10 ether); //gas fee
+        return value;
+    }
+
+    function accountHandlerFuzzingParamsAdd(uint256 value, uint256 addedCollateral, bytes[] memory fakeBlsAddyDeposit, bytes[] memory fakeBlsAddyAdd) public payable returns (uint256, uint256) {
+        addedCollateral = bound(addedCollateral, 0 ether, 100_000_000 ether);
+        vm.deal(msg.sender, addedCollateral + 10 ether);
+        uint256 deposit =  accountHandlerFuzzingParamsDeposit(value, fakeBlsAddyDeposit);
+        vm.assume(fakeBlsAddyAdd.length > 1);
+        return (deposit, addedCollateral);
+    }
+
     function newAccountHandler() public returns (AccountHandler) {
         return new AccountHandler();
     }
 
     function getHashCommitedBlsAddress(bytes[] memory fakeBlsAddy)
         public
+        pure
         returns (bytes32[] memory)
     {
         bytes32[] memory hashCommitedBlsAddress = new bytes32[](fakeBlsAddy.length);
@@ -108,6 +119,18 @@ contract Fixture is Test {
             hashCommitedBlsAddress[i] = sha256(abi.encodePacked(fakeBlsAddy[i]));
         }
 
+        return hashCommitedBlsAddress;
+    }
+
+    function aggregateBlsAddressHashes(bytes32[] memory fakeBlsAddyDepositHash, bytes32[] memory fakeBlsAddyAddHash) public pure returns (bytes32[] memory) {
+        uint256 length = fakeBlsAddyDepositHash.length + fakeBlsAddyAddHash.length;
+        bytes32[] memory hashCommitedBlsAddress = new bytes32[](length); 
+        for (uint256 i = 0; i < fakeBlsAddyDepositHash.length; i++) {
+            hashCommitedBlsAddress[i] = fakeBlsAddyDepositHash[i];
+        }
+        for (uint256 i = 0; i < fakeBlsAddyAddHash.length; i++) {
+            hashCommitedBlsAddress[i + fakeBlsAddyDepositHash.length] = fakeBlsAddyAddHash[i];
+        }
         return hashCommitedBlsAddress;
     }
 }
