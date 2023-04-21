@@ -1,8 +1,9 @@
 pragma solidity >=0.8.6 <0.9.0;
 
 import {IAccountHandler} from "src/interface/IAccountHandler.sol";
-import "forge-std/console.sol";
 
+/// @title Account Handler
+/// @notice This contract manages account-related operations for builders.
 contract AccountHandler is IAccountHandler {
 
     struct BuilderMetaDatas {
@@ -18,8 +19,8 @@ contract AccountHandler is IAccountHandler {
     event Add(address indexed sender, uint256 amount);
     event Withdrawal(address indexed receiver, uint256 amount);
 
-    //@notice deposit eth as collateral
-    //@param hashCommitedBlsAddress array of hashed the builder's blsPublicKeys
+    /// @notice Deposit ETH as collateral.
+    /// @param hashCommitedBlsAddress Array of hashed builder's BLS public keys which will serve as commitments in case of invalidBlockDispute.
     function deposit(bytes32[] memory hashCommitedBlsAddress) public payable {
         require(builderMetaDatas[msg.sender].exists == false, "Builder already exists");
         require(msg.value > 0, "Deposit amount must be greater than 0");
@@ -34,9 +35,9 @@ contract AccountHandler is IAccountHandler {
         emit Deposit(msg.sender, msg.value);
     }
 
-    //@notice add deposit or commitment to bls addresses
-    //@dev we only push so that builder's can't interact with this array
-    //if they know resolution is comming as it's used as a commitment
+    /// @notice Add deposit or commitment to BLS addresses.
+    /// @dev We only push so that builders can't interact with this array if they know an invalidBlockDispute is coming, as it's used as a commitment.
+    /// @param hashCommitedBlsAddress Array of sha256 hashed BLS public keys to be added.
     function add(bytes32[] memory hashCommitedBlsAddress) public payable {
         require(builderMetaDatas[msg.sender].exists == true, "Builder doesn't exists");
 
@@ -50,7 +51,7 @@ contract AccountHandler is IAccountHandler {
 
     }
 
-    //@notice initiate withdraw with a 7 day timelock
+    /// @notice Initiate a withdrawal with a 7-day timelock.
     function instantiateTransfer() public {
         BuilderMetaDatas storage builderMetaData = builderMetaDatas[msg.sender];
 
@@ -60,7 +61,8 @@ contract AccountHandler is IAccountHandler {
         builderMetaDatas[msg.sender].releaseTime = block.timestamp + 7 days;
     }
 
-    //@notice Transfer Ether to the recipient if 7 days have elapsed since instantiateTransfer
+    /// @notice Transfer ETH to the recipient if 7 days have elapsed since `instantiateTransfer`.
+    /// @param recipient The address to receive the withdrawn funds.
     function withdraw(address payable recipient) public payable {
         require(block.timestamp >= builderMetaDatas[msg.sender].releaseTime, "Transfer is time-locked");
         require(builderMetaDatas[msg.sender].balance >= msg.value, "Insufficient balance");
@@ -73,6 +75,7 @@ contract AccountHandler is IAccountHandler {
         emit Withdrawal(recipient, msg.value);
     }
 
+    // Getter functions
     function getBuilderBalance(address _builder) external view returns (uint256) {
         return builderMetaDatas[_builder].balance;
     }

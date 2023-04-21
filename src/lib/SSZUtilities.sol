@@ -15,8 +15,14 @@ struct BidTrace {
     uint256 value;
 }
 
+/// @title SSZ Utilities
+/// @notice This contract provides utility functions for working with SSZ encoding and computing signing roots.
 contract SSZUtilities {
     
+    /// @notice Compute the signing root of a BeaconBlockHeader.
+    /// @param header The BeaconBlockHeader to compute the signing root for.
+    /// @param domain The domain to be used for signing.
+    /// @return signingroot.
     function getSigningRootBeaconBlockHeader(BeaconBlockHeader memory header, bytes32 domain) public pure returns (bytes32) {
         return sha256(
             bytes.concat(
@@ -26,6 +32,10 @@ contract SSZUtilities {
         );
     }
 
+    /// @notice Compute the signing root of a BidTrace.
+    /// @param bidTrace The BidTrace to compute the signing root for.
+    /// @param domain The domain to be used for signing.
+    /// @return The signing root.
     function getSigningRootBidTrace(BidTrace memory bidTrace, bytes32 domain) public pure returns (bytes32) {
         return sha256(
             bytes.concat(
@@ -35,10 +45,16 @@ contract SSZUtilities {
         );
     }
 
+    /// @notice Compute the hash tree root of a BeaconBlockHeader.
+    /// @param header The BeaconBlockHeader to compute the hash tree root for.
+    /// @return The hash tree root.
     function getHashTreeRootBlockHeader(BeaconBlockHeader memory header) public pure returns (bytes32) {
         return SSZ.sszBeaconBlockHeader(header);
     }
 
+    /// @notice Compute the hash tree root of a BidTrace.
+    /// @param bidTrace The BidTrace to compute the hash tree root for.
+    /// @return The hash tree root.
     function getHashTreeRootBidTrace(BidTrace memory bidTrace) public pure returns (bytes32) {
         bytes32 builderPubkeyChunk = sha256(
             bytes.concat(

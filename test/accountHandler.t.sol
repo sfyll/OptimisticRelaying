@@ -6,9 +6,14 @@ import "forge-std/console.sol";
 import {AccountHandler} from "src/lib/accountHandler.sol";
 import {Fixture} from "test/lib/fixture.sol";
 
+/// @title AccountHandlerTest
+/// @notice AccountHandlerTest contract for testing AccountHandler functionality.
 contract AccountHandlerTest is Fixture {
     AccountHandler accountHandler;
 
+    /// @notice Tests the deposit functionality of AccountHandler.
+    /// @param value The fuzzed amount of Ether to deposit.
+    /// @param fakeBlsAddy A fuzzed array of fake "BLS addresses".
     function testDeposit(uint256 value, bytes[] memory fakeBlsAddy) public {
         accountHandler = newAccountHandler();
 
@@ -21,6 +26,11 @@ contract AccountHandlerTest is Fixture {
         assertEq(keccak256(abi.encodePacked(inContractHashedBlsAdd)), keccak256(abi.encodePacked(hashCommitedBlsAddress)), "Contract Commited Address should be the one we commited");
     }
 
+    /// @notice Tests the add functionality of AccountHandler.
+    /// @param deposit The fuzzed amount of Ether to deposit.
+    /// @param addedCollateral The fuzzed amount of Ether to add as collateral.
+    /// @param fakeBlsAddyDeposit An array of fuzzed fake "BLS addresses" for deposit.
+    /// @param fakeBlsAddyAdd An array of fuzzed fake "BLS addresses" for adding collateral.
     function testAdd(uint256 deposit, uint256 addedCollateral, bytes[] memory fakeBlsAddyDeposit,
                      bytes[] memory fakeBlsAddyAdd) public {
         accountHandler = newAccountHandler();
@@ -42,6 +52,9 @@ contract AccountHandlerTest is Fixture {
         assertEq(keccak256(abi.encodePacked(inContractHashedBlsAdd)), keccak256(abi.encodePacked(ourCommittedHashedBlsAddies)), "Contract Commited Address should be the one we commited");    
     }
 
+    /// @notice Tests the instantiateTransfer functionality of AccountHandler.
+    /// @param value The fuzzed amount of Ether to deposit.
+    /// @param fakeBlsAddy A fuzzed array of fake "BLS addresses".
     function testInstantiateTransfer(uint256 value, bytes[] memory fakeBlsAddy) public {
         accountHandler = newAccountHandler();
         
@@ -53,6 +66,9 @@ contract AccountHandlerTest is Fixture {
         assertTrue(releaseTime > 0, "The release time should be set after initiateTransfer");
     }
 
+    /// @notice Tests the withdraw functionality of AccountHandler.
+    /// @param value The fuzzed amount of Ether to deposit.
+    /// @param fakeBlsAddy A fuzzed array of fake "BLS addresses".
     function testWithdraw(uint256 value, bytes[] memory fakeBlsAddy) public {
         accountHandler = newAccountHandler();
 

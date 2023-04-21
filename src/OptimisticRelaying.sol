@@ -9,18 +9,24 @@ struct Groth16Proof {
     uint256[2] c;
 }
 
+/// @title Optimistic Relaying
+/// @notice This contract handles the optimistic relaying of beacon block headers.
+/// @dev Inherits from AccountHandler and SSZUtilities.
 contract OptimisticRelaying is AccountHandler, SSZUtilities {
 
     uint64 public immutable FIRST_VALID_SLOT;
 
-    ///@notice enforce a first valid slot that should ideally be the one at deploy time
-    ///@param firstValidSlot is ideally the curent slot at deploy time
-    ///@dev this allows to set a lower bound in which block can be disputed in case of mallicious behavior
+    /// @notice Sets the first valid slot during the contract deployment.
+    /// @param firstValidSlot The current slot at deploy time.
+    /// @dev Allows setting a lower bound for which blocks can be disputed in case of malicious behavior.
     constructor(uint64 firstValidSlot) {
         FIRST_VALID_SLOT = firstValidSlot;
     }
 
-    ///@notice verify existance of BLS address in array
+    /// @notice Verifies the existence of the a hashed BLS address in an array.
+    /// @param blsPubKey The BLS public key.
+    /// @param eth1Address The Ethereum address associated with the BLS public key.
+    /// @return True if the BLS address was committed, otherwise False.
     function verifyBlsAddressWasCommited(bytes memory blsPubKey, address eth1Address) public view returns (bool) {
         bytes32 hashedBlsPubKey = sha256(abi.encodePacked(blsPubKey));
         BuilderMetaDatas storage buildermetaData = builderMetaDatas[eth1Address];
@@ -33,7 +39,9 @@ contract OptimisticRelaying is AccountHandler, SSZUtilities {
         return false;
     }
 
-    ///@notice get hash of a eth1 address blspubkey
+    /// @notice Generates an array of hashed BLS addresses.
+    /// @param blsPubKey The array of BLS public keys.
+    /// @return An array of hashed BLS addresses.
     function getHashCommitedBlsAddress(bytes[] memory blsPubKey) public pure returns (bytes32[] memory) {
         bytes32[] memory hashCommitedBlsAddress = new bytes32[](blsPubKey.length);
 
@@ -43,12 +51,19 @@ contract OptimisticRelaying is AccountHandler, SSZUtilities {
         return hashCommitedBlsAddress;    
     }
 
-    //@notice submit builder invalid block + zk Groth16Proof
-    //@dev this function is called by the relayer and allow to verify
-    //both builder and proposer commited on the same block.
+    /// @notice Submits an invalid block dispute, along with a zk Groth16Proof.
+    /// @dev Called by the relayer as it's the only entity with both messages. it allows for verification of both builder and proposer commitments on the same block.
+    /// @param header The beacon block header.
+    /// @param proposerDomain The domain for the proposer according to flashbot mev-boost specs.
+    /// @param bidTrace The bid trace data.
+    /// @param builderDomain The domain for the builder according to flashbot mev-boost specs.
+    /// @param builderPubKeyEth1 The Ethereum address of the builder public key.
+    /// @param builderProof The Groth16Proof of valid BLS-signature.
+    /// @param proposerProof The Groth16Proof of valid BLS-signature.
     function invalidBlockDispute(BeaconBlockHeader memory header, bytes32 proposerDomain,
                                  BidTrace memory bidTrace, bytes32 builderDomain,
-                                 address builderPubKeyEth1, Groth16Proof memory proof)
+                                 address builderPubKeyEth1, Groth16Proof memory builderProof,
+                                 Groth16Proof memory proposerProof)
                                  external payable {
         require(header.slot >= FIRST_VALID_SLOT, "Given slot is to old");
         require(builderMetaDatas[builderPubKeyEth1].exists == true, "Builder doesn't exists");

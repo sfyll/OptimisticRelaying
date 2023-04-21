@@ -5,7 +5,13 @@ import "forge-std/Test.sol";
 import {BidTrace} from "src/lib/SSZUtilities.sol";
 import {SSZ, BeaconBlockHeader} from "telepathy-contracts/src/libraries/SimpleSerialize.sol";
 
+
+/// @title Loader
+/// @notice Loader contract for loading test data from JSON files.
+/// @dev The weird ordering here is because vm.parseJSON requires alphabetical ordering of the fields in the struct, and odd types with conversions are due to the way the JSON is handled.
 contract Loader is Test{
+
+    /// @notice Represents a BeaconBlockHeader with its params alphabetically sorted.
    struct BeaconBlockHeaderFixture {
         bytes32 bodyRoot;
         bytes32 parentRoot;
@@ -14,6 +20,7 @@ contract Loader is Test{
         bytes32 stateRoot;
     }
 
+    /// @notice Represents a BidTrace with its params alphabetically sorted.
     struct BidTraceFixture {
         bytes builderPubkey;
         uint64 gasLimit;
@@ -26,6 +33,7 @@ contract Loader is Test{
         string value;
     }
 
+    /// @notice Represents data required for tests verification.
     struct DataForVerification {
         bytes32 domain;
         bytes32 hashTreeRoot;
@@ -33,6 +41,9 @@ contract Loader is Test{
         bytes32 signingRoot;
     }
     
+    /// @notice Loads a BeaconBlockHeader and its associated signature data from JSON files.
+    /// @param root The root path of the JSON files.
+    /// @return tuple containing the loaded BeaconBlockHeader and the DataForVerification.
     function loadBeaconBlockHeaderAndSig(string memory root) public returns (BeaconBlockHeader memory, DataForVerification memory) {
         string memory beaconBlockHeaderContent = vm.readFile(string.concat(root, "/test_data/beacon_block_header.json"));
         string memory headerVerificationDataContent = vm.readFile(string.concat(root, "/test_data/beacon_block_header_data_for_verification.json"));
@@ -48,6 +59,9 @@ contract Loader is Test{
         return (newBeaconBlockHeader(beaconBlockHeaderFixture), headerVerificationData);
     }
 
+    /// @notice Loads a BidTrace and its associated signature data from JSON files.
+    /// @param root The root path of the JSON files.
+    /// @return tuple containing the loaded BidTrace and the DataForVerification.
     function loadBeaconBidTraceAndSig(string memory root) public returns (BidTrace memory, DataForVerification memory) {
         string memory bidTraceContent = vm.readFile(string.concat(root, "/test_data/bid_trace.json"));
         string memory bidTraceVerificationDataContent = vm.readFile(string.concat(root, "/test_data/bid_trace_data_for_verification.json"));
@@ -63,6 +77,9 @@ contract Loader is Test{
         return (newBidTrace(bidTraceFixture), bidTraceVerificationData);
     }
 
+    /// @notice Creates a new BeaconBlockHeader instance from a fixture.
+    /// @param beaconBlockHeaderFixture The BeaconBlockHeaderFixture to convert.
+    /// @return The converted BeaconBlockHeader instance.
     function newBeaconBlockHeader(BeaconBlockHeaderFixture memory beaconBlockHeaderFixture)
         public
         pure
@@ -77,6 +94,9 @@ contract Loader is Test{
         );
     }
 
+    /// @notice Creates a new BidTrace instance from a fixture.
+    /// @param bidTraceFixture The BidTraceFixture to convert.
+    /// @return The converted BidTrace instance.
     function newBidTrace(BidTraceFixture memory bidTraceFixture)
         public
         pure
@@ -95,6 +115,9 @@ contract Loader is Test{
         );
     }
 
+    /// @notice Converts a string to a uint256.
+    /// @param str The input string to convert.
+    /// @return res converted uint256.
     function strToUint(string memory str) internal pure returns (uint256 res) {
         for (uint256 i = 0; i < bytes(str).length; i++) {
             if ((uint8(bytes(str)[i]) - 48) < 0 || (uint8(bytes(str)[i]) - 48) > 9) {

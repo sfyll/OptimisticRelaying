@@ -7,6 +7,8 @@ import {OptimisticRelaying} from "src/OptimisticRelaying.sol";
 import {Fixture} from "test/lib/fixture.sol";
 import {BidTrace} from "../src/lib/SSZUtilities.sol";
 
+/// @title OptimisticRelayingTest
+/// @notice OptimisticRelayingTest contract for testing OptimisticRelaying functionality.
 contract OptimisticRelayingTest is Fixture {
     
     OptimisticRelaying public optimisticRelaying;
@@ -14,6 +16,7 @@ contract OptimisticRelayingTest is Fixture {
     BidTrace public bidTrace;
     DataForVerification public bidTraceVerificationData;
     
+    /// @notice Sets up the initial state for the test cases.
     function setUp() public {
         string memory root = vm.projectRoot();
         
@@ -24,6 +27,7 @@ contract OptimisticRelayingTest is Fixture {
         optimisticRelaying = new OptimisticRelaying(bidTrace.slot);
     }
 
+    /// @notice Tests the verifyBlsAddressWasCommited and getHashCommitedBlsAddress functionality of OptimisticRelaying.
     ///@dev not need to fuzz test deposit logic as it is done in accountHandler.t.sol
     function testVerifyBlsAddressWasCommitedAndgetHashCommitedBlsAddress() public {
         uint256 value = 5 ether;
@@ -40,6 +44,7 @@ contract OptimisticRelayingTest is Fixture {
         assertEq(optimisticRelaying.verifyBlsAddressWasCommited(builderPubKeys[0], address(this)), true, "Should fine the address as commited"); 
     }
 
+    /// @notice Tests the failure case of verifyBlsAddressWasCommited and getHashCommitedBlsAddress functionality of OptimisticRelaying.
     function testFailVerifyBlsAddressWasCommitedAndgetHashCommitedBlsAddress() public {
         bytes[] memory builderPubKeys = new bytes[](1);
         builderPubKeys[0] = abi.encodePacked(bidTrace.builderPubkey);
