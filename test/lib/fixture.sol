@@ -1,6 +1,6 @@
 pragma solidity >=0.8.0 <0.9.0;
 
-import {AccountHandler} from"src/lib/accountHandler.sol";
+import {AccountHandler} from "src/accountHandler.sol";
 import {OptimisticRelaying} from "src/OptimisticRelaying.sol";
 
 import {Loader} from "test/lib/loader.sol";

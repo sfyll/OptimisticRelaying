@@ -1,6 +1,6 @@
 pragma solidity >=0.8.6 <0.9.0;
 
-import {AccountHandler} from "./lib/accountHandler.sol";
+import {AccountHandler} from "src/accountHandler.sol";
 import {BeaconBlockHeader, BidTrace, SSZUtilities} from"./lib/SSZUtilities.sol";
 
 struct Groth16Proof {
@@ -12,7 +12,7 @@ struct Groth16Proof {
 /// @title Optimistic Relaying
 /// @notice This contract handles the optimistic relaying of beacon block headers.
 /// @dev Inherits from AccountHandler and SSZUtilities.
-contract OptimisticRelaying is AccountHandler, SSZUtilities {
+contract OptimisticRelaying is AccountHandler {
 
     uint64 public immutable FIRST_VALID_SLOT;
 
@@ -75,8 +75,8 @@ contract OptimisticRelaying is AccountHandler, SSZUtilities {
             header.stateRoot == bidTrace.stateRoot
         ), "block content does not match");
 
-        bytes32 bidTraceSigningRoot = getSigningRootBidTrace(bidTrace, builderDomain);
-        bytes32 headerSigningRoot = getSigningRootBeaconBlockHeader(header, proposerDomain);
+        bytes32 bidTraceSigningRoot = SSZUtilities.getSigningRootBidTrace(bidTrace, builderDomain);
+        bytes32 headerSigningRoot = SSZUtilities.getSigningRootBeaconBlockHeader(header, proposerDomain);
 
         // Below will be implemented via snark-js automatically. What won't be are the circuits!
         // Nonetheless, since all inputs are fixed size SSZ encoded is trivial and one can

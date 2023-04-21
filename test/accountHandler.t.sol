@@ -3,7 +3,7 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "forge-std/console.sol";
 
-import {AccountHandler} from "src/lib/accountHandler.sol";
+import {AccountHandler} from "src/accountHandler.sol";
 import {Fixture} from "test/lib/fixture.sol";
 
 /// @title AccountHandlerTest
