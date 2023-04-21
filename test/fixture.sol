@@ -96,12 +96,11 @@ contract Fixture is Test {
         return value;
     }
 
-    function accountHandlerFuzzingParamsAdd(uint256 value, uint256 addedCollateral, bytes[] memory fakeBlsAddyDeposit, bytes[] memory fakeBlsAddyAdd) public payable returns (uint256, uint256) {
+    function accountHandlerFuzzingParamsAdd(uint256 addedCollateral, bytes[] memory fakeBlsAddyAdd) public payable returns (uint256) {
         addedCollateral = bound(addedCollateral, 0 ether, 100_000_000 ether);
         vm.deal(msg.sender, addedCollateral + 10 ether);
-        uint256 deposit =  accountHandlerFuzzingParamsDeposit(value, fakeBlsAddyDeposit);
         vm.assume(fakeBlsAddyAdd.length > 1);
-        return (deposit, addedCollateral);
+        return addedCollateral;
     }
 
     function newAccountHandler() public returns (AccountHandler) {
