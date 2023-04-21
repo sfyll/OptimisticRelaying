@@ -2,14 +2,13 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 import "forge-std/console.sol";
-import "forge-std/Test.sol";
 
 import {BidTrace, SSZUtilities} from "../src/lib/SSZUtilities.sol";
 import {SSZ, BeaconBlockHeader} from "telepathy-contracts/src/libraries/SimpleSerialize.sol";
 import {BytesLib} from "telepathy-contracts/src/libraries/MessageEncoding.sol";
 import {Fixture} from "test/fixture.sol";
 
-contract SSZUtilitiesTest is Test, Fixture {
+contract SSZUtilitiesTest is Fixture {
 
     SSZUtilities public SSZutilities;
 
