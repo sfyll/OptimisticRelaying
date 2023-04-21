@@ -6,7 +6,7 @@ import "forge-std/console.sol";
 import {BidTrace, SSZUtilities} from "../src/lib/SSZUtilities.sol";
 import {SSZ, BeaconBlockHeader} from "telepathy-contracts/src/libraries/SimpleSerialize.sol";
 import {BytesLib} from "telepathy-contracts/src/libraries/MessageEncoding.sol";
-import {Fixture} from "test/fixture.sol";
+import {Fixture} from "test/lib/fixture.sol";
 
 contract SSZUtilitiesTest is Fixture {
 
@@ -18,48 +18,18 @@ contract SSZUtilitiesTest is Fixture {
     BidTrace public bidTrace;
     DataForVerification public bidTraceVerificationData;
     
-     function setUp() public {
+    function setUp() public {
         SSZutilities = new SSZUtilities();
 
         string memory root = vm.projectRoot();
 
-        loadBeaconBlockHeaderAndSig(root);
+        (header, headerVerificationData) = loadBeaconBlockHeaderAndSig(root);
         
-        loadBeaconBidTraceAndSig(root);
+        (bidTrace, bidTraceVerificationData) = loadBeaconBidTraceAndSig(root);
 
-        }
+    }
 
-        function loadBeaconBlockHeaderAndSig(string memory root) public {
-            string memory beaconBlockHeaderContent = vm.readFile(string.concat(root, "/test_data/beacon_block_header.json"));
-            string memory headerVerificationDataContent = vm.readFile(string.concat(root, "/test_data/beacon_block_header_data_for_verification.json"));
-            
-
-            bytes memory beaconBlockHeaderData = vm.parseJson(beaconBlockHeaderContent);
-            bytes memory headerVerificationContent = vm.parseJson(headerVerificationDataContent);
-
-
-            BeaconBlockHeaderFixture memory beaconBlockHeaderFixture = abi.decode(beaconBlockHeaderData, (BeaconBlockHeaderFixture));
-            headerVerificationData = abi.decode(headerVerificationContent, (DataForVerification));
-            
-            header = newBeaconBlockHeader(beaconBlockHeaderFixture);
-        }
-
-        function loadBeaconBidTraceAndSig(string memory root) public {
-            string memory bidTraceContent = vm.readFile(string.concat(root, "/test_data/bid_trace.json"));
-            string memory bidTraceVerificationDataContent = vm.readFile(string.concat(root, "/test_data/bid_trace_data_for_verification.json"));
-
-
-            bytes memory bidTraceData = vm.parseJson(bidTraceContent);
-            bytes memory bidTraceVerificationContent = vm.parseJson(bidTraceVerificationDataContent);
-
-            BidTraceFixture memory bidTraceFixture = abi.decode(bidTraceData, (BidTraceFixture));
-            bidTraceVerificationData = abi.decode(bidTraceVerificationContent, (DataForVerification));
-
-
-            bidTrace = newBidTrace(bidTraceFixture);
-        }
-
-    function test_getHashTreeRootBlockHeader() public view{
+    function test_getHashTreeRootBlockHeader() public view {
         bytes32 hashTreeRoot = SSZutilities.getHashTreeRootBlockHeader(header);
         assert(hashTreeRoot == headerVerificationData.hashTreeRoot);
     }
