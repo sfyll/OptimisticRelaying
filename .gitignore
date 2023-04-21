@@ -3,3 +3,5 @@ env/
 cache/
 .DS_STORE
 __pycache__
+.vscode/
+sandbox.py
