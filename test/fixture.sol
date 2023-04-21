@@ -1,14 +1,28 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 import {SSZ, BeaconBlockHeader} from "telepathy-contracts/src/libraries/SimpleSerialize.sol";
+import "forge-std/Test.sol";
+
 import {BidTrace} from "../src/lib/SSZUtilities.sol";
+import {AccountHandler} from"src/lib/accountHandler.sol";
+
 
 /// Forked from https://github.com/succinctlabs/telepathy-contracts/
 /// @notice Helper contract for parsing the JSON fixture, and converting them to the correct types.
 /// @dev    The weird ordering here is because vm.parseJSON require alphabetical ordering of the
 ///         fields in the struct, and odd types with conversions are due to the way the JSON is
 ///         handled.
-contract Fixture {
+contract Fixture is Test {
+
+    modifier accountHandlerFuzzingParams (uint256 value, bytes[] memory fakeBlsAddy) {
+        vm.assume(value > 0 ether);
+        vm.assume(value < 100_000_00 ether);
+        vm.assume(fakeBlsAddy.length < 100);
+        vm.deal(address(this), value + 1 ether); //gas fee
+        _;
+    }
+
+    //SSZUtilities Test Section
 
     struct BeaconBlockHeaderFixture {
         bytes32 bodyRoot;
@@ -76,5 +90,24 @@ contract Fixture {
         }
 
         return res;
+    }
+
+    //AccountHandler test section
+
+    function newAccountHandler() public returns (AccountHandler) {
+        return new AccountHandler();
+    }
+
+    function getHashCommitedBlsAddress(bytes[] memory fakeBlsAddy)
+        public
+        returns (bytes32[] memory)
+    {
+        bytes32[] memory hashCommitedBlsAddress = new bytes32[](fakeBlsAddy.length);
+
+        for (uint256 i = 0; i < fakeBlsAddy.length; i++) {
+            hashCommitedBlsAddress[i] = sha256(abi.encodePacked(fakeBlsAddy[i]));
+        }
+
+        return hashCommitedBlsAddress;
     }
 }
