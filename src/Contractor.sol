@@ -1,6 +1,6 @@
 pragma solidity >=0.8.6 <0.9.0;
 
-import {AccountHandler} from"./lib/accountHandler.sol";
+import {AccountHandler} from "./lib/accountHandler.sol";
 import {BeaconBlockHeader, BidTrace, SSZUtilities} from"./lib/SSZUtilities.sol";
 
 struct Groth16Proof {
