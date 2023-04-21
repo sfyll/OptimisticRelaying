@@ -45,7 +45,7 @@ contract OptimisticRelayingTest is Fixture {
     }
 
     /// @notice Tests the failure case of verifyBlsAddressWasCommited and getHashCommitedBlsAddress functionality of OptimisticRelaying.
-    function testFailVerifyBlsAddressWasCommitedAndgetHashCommitedBlsAddress() public {
+    function testFailVerifyBlsAddressWasCommitedAndgetHashCommitedBlsAddress() public view {
         bytes[] memory builderPubKeys = new bytes[](1);
         builderPubKeys[0] = abi.encodePacked(bidTrace.builderPubkey);
 

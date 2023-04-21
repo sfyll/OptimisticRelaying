@@ -17,7 +17,9 @@ contract AccountHandlerTest is Fixture {
     function testDeposit(uint256 value, bytes[] memory fakeBlsAddy) public {
         accountHandler = newAccountHandler();
 
-        (uint256 value, bytes32[] memory hashCommitedBlsAddress) = depositAndGetHashOfCommitedBlsAddressFuzzing(value, fakeBlsAddy, accountHandler);
+        bytes32[] memory hashCommitedBlsAddress;
+
+        (value, hashCommitedBlsAddress) = depositAndGetHashOfCommitedBlsAddressFuzzing(value, fakeBlsAddy, accountHandler);
 
         uint256 balance = address(accountHandler).balance;
         bytes32[] memory inContractHashedBlsAdd = accountHandler.getBuilderHashCommitedBlsAddress(address(this));
@@ -35,7 +37,9 @@ contract AccountHandlerTest is Fixture {
                      bytes[] memory fakeBlsAddyAdd) public {
         accountHandler = newAccountHandler();
 
-        (uint256 deposit, bytes32[] memory hashCommitedBlsAddressDeposit) = depositAndGetHashOfCommitedBlsAddressFuzzing(deposit, fakeBlsAddyDeposit, accountHandler);
+        bytes32[] memory hashCommitedBlsAddressDeposit;
+
+        (deposit, hashCommitedBlsAddressDeposit) = depositAndGetHashOfCommitedBlsAddressFuzzing(deposit, fakeBlsAddyDeposit, accountHandler);
 
         addedCollateral = accountHandlerFuzzingParamsAdd(addedCollateral, fakeBlsAddyAdd);
 
@@ -57,8 +61,10 @@ contract AccountHandlerTest is Fixture {
     /// @param fakeBlsAddy A fuzzed array of fake "BLS addresses".
     function testInstantiateTransfer(uint256 value, bytes[] memory fakeBlsAddy) public {
         accountHandler = newAccountHandler();
+
+        bytes32[] memory hashCommitedBlsAddressDeposit;
         
-        (uint256 value, bytes32[] memory __) = depositAndGetHashOfCommitedBlsAddressFuzzing(value, fakeBlsAddy, accountHandler);
+        (value, hashCommitedBlsAddressDeposit) = depositAndGetHashOfCommitedBlsAddressFuzzing(value, fakeBlsAddy, accountHandler);
 
         accountHandler.instantiateTransfer();
         uint256 releaseTime = accountHandler.getBuilderReleaseTime(address(this));
@@ -72,13 +78,15 @@ contract AccountHandlerTest is Fixture {
     function testWithdraw(uint256 value, bytes[] memory fakeBlsAddy) public {
         accountHandler = newAccountHandler();
 
-        (uint256 value, bytes32[] memory hashCommitedBlsAddress) = depositAndGetHashOfCommitedBlsAddressFuzzing(value, fakeBlsAddy, accountHandler);
+        bytes32[] memory hashCommitedBlsAddressDeposit;
+        
+        (value, hashCommitedBlsAddressDeposit) = depositAndGetHashOfCommitedBlsAddressFuzzing(value, fakeBlsAddy, accountHandler);
 
         accountHandler.instantiateTransfer();
         uint256 releaseTime = accountHandler.getBuilderReleaseTime(address(this));
 
-        uint256 currentTimestamp = block.timestamp;
         vm.warp(8 days);
+
         uint256 newTimestamp = block.timestamp;
 
         assertTrue(newTimestamp > releaseTime, "The new timestamp should be greater than the release time");

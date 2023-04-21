@@ -44,7 +44,7 @@ contract Loader is Test{
     /// @notice Loads a BeaconBlockHeader and its associated signature data from JSON files.
     /// @param root The root path of the JSON files.
     /// @return tuple containing the loaded BeaconBlockHeader and the DataForVerification.
-    function loadBeaconBlockHeaderAndSig(string memory root) public returns (BeaconBlockHeader memory, DataForVerification memory) {
+    function loadBeaconBlockHeaderAndSig(string memory root) public view returns (BeaconBlockHeader memory, DataForVerification memory) {
         string memory beaconBlockHeaderContent = vm.readFile(string.concat(root, "/test_data/beacon_block_header.json"));
         string memory headerVerificationDataContent = vm.readFile(string.concat(root, "/test_data/beacon_block_header_data_for_verification.json"));
         
@@ -62,7 +62,7 @@ contract Loader is Test{
     /// @notice Loads a BidTrace and its associated signature data from JSON files.
     /// @param root The root path of the JSON files.
     /// @return tuple containing the loaded BidTrace and the DataForVerification.
-    function loadBeaconBidTraceAndSig(string memory root) public returns (BidTrace memory, DataForVerification memory) {
+    function loadBeaconBidTraceAndSig(string memory root) public view returns (BidTrace memory, DataForVerification memory) {
         string memory bidTraceContent = vm.readFile(string.concat(root, "/test_data/bid_trace.json"));
         string memory bidTraceVerificationDataContent = vm.readFile(string.concat(root, "/test_data/bid_trace_data_for_verification.json"));
 
