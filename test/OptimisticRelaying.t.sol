@@ -7,7 +7,7 @@ import {OptimisticRelaying} from "src/OptimisticRelaying.sol";
 import {Fixture} from "test/lib/fixture.sol";
 import {BidTrace} from "../src/lib/SSZUtilities.sol";
 
-contract AccountHandlerTest is Fixture {
+contract OptimisticRelayingTest is Fixture {
     
     OptimisticRelaying public optimisticRelaying;
 
