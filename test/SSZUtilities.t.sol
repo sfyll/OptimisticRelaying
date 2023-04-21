@@ -12,8 +12,6 @@ import {Fixture} from "test/lib/fixture.sol";
 /// @notice SSZUtilitiesTest contract for testing SSZUtilities functionality.
 contract SSZUtilitiesTest is Fixture {
 
-    SSZUtilities public SSZutilities;
-
     BeaconBlockHeader public header;
     DataForVerification public headerVerificationData;
     
@@ -22,7 +20,6 @@ contract SSZUtilitiesTest is Fixture {
     
      /// @notice Sets up the initial state for the test cases.
     function setUp() public {
-        SSZutilities = new SSZUtilities();
 
         string memory root = vm.projectRoot();
 
@@ -34,25 +31,25 @@ contract SSZUtilitiesTest is Fixture {
 
     /// @notice Tests the getHashTreeRootBlockHeader functionality of SSZUtilities.
     function test_getHashTreeRootBlockHeader() public view {
-        bytes32 hashTreeRoot = SSZutilities.getHashTreeRootBlockHeader(header);
+        bytes32 hashTreeRoot = SSZUtilities.getHashTreeRootBlockHeader(header);
         assert(hashTreeRoot == headerVerificationData.hashTreeRoot);
     }
 
     /// @notice Tests the getHashTreeRootBidTrace functionality of SSZUtilities.
     function test_getHashTreeRootBidTrace() public view {
-        bytes32 hashTreeRoot = SSZutilities.getHashTreeRootBidTrace(bidTrace);
+        bytes32 hashTreeRoot = SSZUtilities.getHashTreeRootBidTrace(bidTrace);
         assert(hashTreeRoot == bidTraceVerificationData.hashTreeRoot);
     }
 
     /// @notice Tests the getSigningRootBeaconBlockHeader functionality of SSZUtilities.
     function test_getSigningRootBeaconBlockHeader() public view {
-        bytes32 signingRoot = SSZutilities.getSigningRootBeaconBlockHeader(header, headerVerificationData.domain);
+        bytes32 signingRoot = SSZUtilities.getSigningRootBeaconBlockHeader(header, headerVerificationData.domain);
         assert(signingRoot == headerVerificationData.signingRoot);
     }
 
     /// @notice Tests the getSigningRootBidTrace functionality of SSZUtilities.
     function test_getSigningRootBidTrace() public view {
-        bytes32 signingRoot = SSZutilities.getSigningRootBidTrace(bidTrace, bidTraceVerificationData.domain);
+        bytes32 signingRoot = SSZUtilities.getSigningRootBidTrace(bidTrace, bidTraceVerificationData.domain);
         assert(signingRoot == bidTraceVerificationData.signingRoot);
     }
 }

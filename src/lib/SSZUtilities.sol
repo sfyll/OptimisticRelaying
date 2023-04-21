@@ -17,7 +17,7 @@ struct BidTrace {
 
 /// @title SSZ Utilities
 /// @notice This contract provides utility functions for working with SSZ encoding and computing signing roots.
-contract SSZUtilities {
+library SSZUtilities {
     
     /// @notice Compute the signing root of a BeaconBlockHeader.
     /// @param header The BeaconBlockHeader to compute the signing root for.
