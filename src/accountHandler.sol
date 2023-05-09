@@ -3,7 +3,7 @@ pragma solidity >=0.8.6 <0.9.0;
 import {IAccountHandler} from "src/interface/IAccountHandler.sol";
 
 /// @title Account Handler
-/// @notice This contract manages account-related operations for builders.
+/// @notice This contract manages account-related operations for builders and relayers.
 contract AccountHandler is IAccountHandler {
 
     struct BuilderMetaDatas {
