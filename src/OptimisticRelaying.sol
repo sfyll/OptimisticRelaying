@@ -11,7 +11,7 @@ struct Groth16Proof {
 
 /// @title Optimistic Relaying
 /// @notice This contract handles the optimistic relaying of beacon block headers.
-/// @dev Inherits from AccountHandler and SSZUtilities.
+/// @dev Inherits from AccountHandler and uses the SSZUtilities library.
 contract OptimisticRelaying is AccountHandler {
 
     uint64 public immutable FIRST_VALID_SLOT;
@@ -51,7 +51,7 @@ contract OptimisticRelaying is AccountHandler {
         return hashCommitedBlsAddress;    
     }
 
-    /// @notice Submits an invalid block dispute, along with a zk Groth16Proof.
+    /// @notice Submits an invalid block dispute, along with a ZK Groth16 Proof.
     /// @dev Called by the relayer as it's the only entity with both messages. it allows for verification of both builder and proposer commitments on the same block.
     /// @param header The beacon block header.
     /// @param proposerDomain The domain for the proposer according to flashbot mev-boost specs.
